@@ -6,6 +6,7 @@
 
 /dts-v1/;
 #include <dt-bindings/input/input.h>
+#include <dt-bindings/gpio/gpio.h>
 #include "mt7623.dtsi"
 #include "mt6323.dtsi"
 
@@ -376,6 +377,7 @@
 		};
 	};
 };
+
 &consys {
 	mediatek,pwrap-regmap = <&pwrap>;
 	pinctrl-names = "default";
@@ -425,6 +427,27 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart0_pins_a>;
 	status = "okay";
+};
+
+&usb0 {
+	status = "okay";
+	usb-role-switch;
+
+	usb_vbus: regulator@0 {
+		compatible = "regulator-fixed";
+		regulator-name = "usb_vbus";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		gpio = <&pio 237 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+	};
+
+	connector{
+		compatible = "gpio-usb-b-connector", "usb-b-connector";
+		type = "micro";
+		id-gpios = <&pio 44 GPIO_ACTIVE_HIGH>;
+		vbus-supply = <&usb_vbus>;
+	};
 };
 
 &uart1 {
