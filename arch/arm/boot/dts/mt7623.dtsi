@@ -1221,7 +1221,7 @@
 		};
 	};
 
-	usb0: usb@11200000 {
+	usb0: usb-otg@11200000 {
 		compatible = "mediatek,mt7623-musb",
 			     "mediatek,mtk-musb";
 		reg = <0 0x11200000 0 0x1000>;
