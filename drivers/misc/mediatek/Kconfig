@@ -2,6 +2,7 @@ menu "Mediatek Peripherals "
 depends on ARM
 config MTK_PLATFORM
         string "MTK platform name"
+	default "mt7623"
 source "drivers/misc/mediatek/btif/Kconfig"
 
 menu "Modem & Connectivity related configs"
