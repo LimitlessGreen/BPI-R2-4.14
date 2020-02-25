@@ -513,9 +513,9 @@
 
 &usb0 {
 	status = "okay";
-	//usb-role-switch;
-	dr_mode = "host";
-	vbus-supply = <&mt6323_vusb_reg>;
+	usb-role-switch;
+	//dr_mode = "host";
+	//vbus-supply = <&mt6323_vusb_reg>;
 	connector{
 		compatible = "gpio-usb-b-connector", "usb-b-connector";
 		type = "micro";
