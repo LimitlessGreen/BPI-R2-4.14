@@ -417,7 +417,7 @@ static void mtk_mac_link_up(struct phylink_config *config,
 		if (rx_pause)
 			mcr |= MAC_MCR_FORCE_RX_FC;
 	}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d MCR: 0x%x \n",__FUNCTION__,__LINE__,mcr);
 	mtk_w32(mac->hw, mcr, MTK_MAC_MCR(mac->id));
 }
 
