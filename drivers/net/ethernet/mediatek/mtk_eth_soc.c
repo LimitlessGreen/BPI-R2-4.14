@@ -344,7 +344,7 @@ static void mtk_mac_config(struct phylink_config *config, unsigned int mode,
 		if (state->pause & MLO_PAUSE_RX)
 			mcr_new |= MAC_MCR_FORCE_RX_FC;
 	}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d MCR: 0x%x \n",__FUNCTION__,__LINE__,mcr_new);
 	/* Only update control register when needed! */
 	if (mcr_new != mcr_cur)
 		mtk_w32(mac->hw, mcr_new, MTK_MAC_MCR(mac->id));
