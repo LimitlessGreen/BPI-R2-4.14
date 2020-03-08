@@ -194,7 +194,7 @@ static void mtk_mac_config(struct phylink_config *config, unsigned int mode,
 					   phylink_config);
 	struct mtk_eth *eth = mac->hw;
 	int val, ge_mode, err;
-	u32 sid, i;
+	u32 sid;
 
 	/* MT76x8 has no hardware settings between for the MAC */
 	if (!MTK_HAS_CAPS(eth->soc->caps, MTK_SOC_MT7628) &&
@@ -398,8 +398,7 @@ static void mtk_mac_link_up(struct phylink_config *config,
 	}
 
 	mcr = MAC_MCR_MAX_RX_1536 | MAC_MCR_IPG_CFG | MAC_MCR_FORCE_MODE |
-	      MAC_MCR_BACKOFF_EN | MAC_MCR_BACKPR_EN | MAC_MCR_FORCE_LINK |
-	      MAC_MCR_TX_EN | MAC_MCR_RX_EN;
+	      MAC_MCR_BACKOFF_EN | MAC_MCR_BACKPR_EN | MAC_MCR_FORCE_LINK;
 
 	switch (speed) {
 	case SPEED_2500:
@@ -419,6 +418,12 @@ static void mtk_mac_link_up(struct phylink_config *config,
 	}
 printk(KERN_ALERT "DEBUG: Passed %s %d MCR: 0x%x \n",__FUNCTION__,__LINE__,mcr);
 	mtk_w32(mac->hw, mcr, MTK_MAC_MCR(mac->id));
+
+	//give some time for applying settings
+	msleep(10);
+
+        mcr |= MAC_MCR_TX_EN | MAC_MCR_RX_EN;
+        mtk_w32(mac->hw, mcr, MTK_MAC_MCR(mac->id));
 }
 
 static void mtk_validate(struct phylink_config *config,
