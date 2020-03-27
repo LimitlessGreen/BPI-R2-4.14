@@ -404,6 +404,7 @@
 #define ETHSYS_TRGMII_MT7621_MASK	(BIT(5) | BIT(6))
 #define ETHSYS_TRGMII_MT7621_APLL	BIT(6)
 #define ETHSYS_TRGMII_MT7621_DDR_PLL	BIT(5)
+#define ETHSYS_TRGMII_MT7623_MASK	(BIT(11) | BIT(12))
 
 /* ethernet reset control register */
 #define ETHSYS_RSTCTRL		0x34

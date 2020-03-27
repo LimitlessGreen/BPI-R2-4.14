@@ -256,6 +256,12 @@ static void mtk_mac_config(struct phylink_config *config, unsigned int mode,
 				    PHY_INTERFACE_MODE_TRGMII)
 					mtk_gmac0_rgmii_adjust(mac->hw,
 							       state->speed);
+				else {
+					regmap_read(eth->ethsys, ETHSYS_SYSCFG, &val);
+					regmap_update_bits(eth->ethsys, ETHSYS_CLKCFG0,
+							   ETHSYS_TRGMII_MT7623_MASK,
+							   val & ~ETHSYS_TRGMII_CLK_SEL362_5);
+				}
 			}
 		}
 
