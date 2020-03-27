@@ -165,6 +165,7 @@ static void mtk_gmac0_rgmii_adjust(struct mtk_eth *eth, int speed)
 	u32 val;
 	int ret;
 
+	printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	val = (speed == SPEED_1000) ?
 		INTF_MODE_RGMII_1000 : INTF_MODE_RGMII_10_100;
 	mtk_w32(eth, val, INTF_MODE);

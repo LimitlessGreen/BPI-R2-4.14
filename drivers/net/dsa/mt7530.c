@@ -430,6 +430,7 @@ mt7530_pad_clk_setup(struct dsa_switch *ds, int mode)
 	struct mt7530_priv *priv = ds->priv;
 	u32 ncpo1, ssc_delta, trgint, i, xtal;
 
+	printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	xtal = mt7530_read(priv, MT7530_MHWTRAP) & HWTRAP_XTAL_MASK;
 
 	if (xtal == HWTRAP_XTAL_20MHZ) {
@@ -544,6 +545,7 @@ mt7623_pad_clk_setup(struct dsa_switch *ds)
 	struct mt7530_priv *priv = ds->priv;
 	int i;
 
+	printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	for (i = 0 ; i < NUM_TRGMII_CTRL; i++)
 		mt7623_trgmii_write(priv, GSW_TRGMII_TD_ODT(i),
 				    TD_DM_DRVP(8) | TD_DM_DRVN(8));
