@@ -20,7 +20,6 @@
 struct mtk_hdmi_phy;
 
 struct mtk_hdmi_phy_conf {
-	bool tz_disabled;
 	unsigned long flags;
 	bool pll_default_off;
 	const struct clk_ops *hdmi_phy_clk_ops;
