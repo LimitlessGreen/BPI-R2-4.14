@@ -498,11 +498,11 @@ static const struct mtk_mmc_compatible mt7622_compat = {
 	.clk_div_bits = 12,
 	.hs400_tune = false,
 	.pad_tune_reg = MSDC_PAD_TUNE0,
-	.async_fifo = true,
+	.async_fifo = false,
 	.data_tune = true,
 	.busy_check = true,
 	.stop_clk_fix = true,
-	.enhance_rx = true,
+	.enhance_rx = false,
 	.support_64g = false,
 };
 
@@ -1011,7 +1011,7 @@ static void msdc_track_cmd_data(struct msdc_host *host,
 				struct mmc_command *cmd, struct mmc_data *data)
 {
 	if (host->error)
-		dev_dbg(host->dev, "%s: cmd=%d arg=%08X; host->error=0x%08X\n",
+		dev_err(host->dev, "%s: cmd=%d arg=%08X; host->error=0x%08X\n",
 			__func__, cmd->opcode, cmd->arg, host->error);
 }
 
@@ -1098,7 +1098,7 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
 		}
 	}
 	if (cmd->error)
-		dev_dbg(host->dev,
+		dev_err(host->dev,
 				"%s: cmd=%d arg=%08X; rsp %08X; cmd_error=%d\n",
 				__func__, cmd->opcode, cmd->arg, rsp[0],
 				cmd->error);
@@ -1292,9 +1292,9 @@ static bool msdc_data_xfer_done(struct msdc_host *host, u32 events,
 			else if (events & MSDC_INT_DATCRCERR)
 				data->error = -EILSEQ;
 
-			dev_dbg(host->dev, "%s: cmd=%d; blocks=%d",
+			dev_err(host->dev, "%s: cmd=%d; blocks=%d",
 				__func__, mrq->cmd->opcode, data->blocks);
-			dev_dbg(host->dev, "data_error=%d xfer_size=%d\n",
+			dev_err(host->dev, "data_error=%d xfer_size=%d\n",
 				(int)data->error, data->bytes_xfered);
 		}
 
