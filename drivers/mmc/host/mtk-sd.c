@@ -589,6 +589,35 @@ static void msdc_reset_hw(struct msdc_host *host)
 	writel(val, host->base + MSDC_INT);
 }
 
+static void dump_register(struct msdc_host *host)
+{
+        int xx = 0;
+
+        while (xx <= 0x100) {
+                dev_err(host->dev, "reg[ %x]: %08x.\n",
+                                xx, readl(host->base + xx));
+                xx += 0x4;
+        }
+        dev_err(host->dev, "reg[188]: %08x.\n",
+                        readl(host->base + 0x188));
+        dev_err(host->dev, "reg[18c]: %08x.\n",
+                        readl(host->base + 0x18c));
+        dev_err(host->dev, "reg[208]: %08x.\n",
+                        readl(host->base + 0x208));
+        dev_err(host->dev, "reg[220]: %08x.\n",
+                        readl(host->base + 0x220));
+        dev_err(host->dev, "reg[228]: %08x.\n",
+                        readl(host->base + 0x228));
+
+        for (xx = 0; xx <= 0x27; xx++) {
+                writel(xx, host->base + 0xa0);
+                dev_err(host->dev, "SEL[ %x] = 0x%x \tOUT[ %x] = 0x%x.\n",
+                                0xa0, xx, 0xa4, readl(host->base + 0xa4));
+        }
+
+        writel(0, host->base + 0xa0);
+}
+
 static void msdc_cmd_next(struct msdc_host *host,
 		struct mmc_request *mrq, struct mmc_command *cmd);
 
@@ -1010,9 +1039,13 @@ static int msdc_auto_cmd_done(struct msdc_host *host, int events,
 static void msdc_track_cmd_data(struct msdc_host *host,
 				struct mmc_command *cmd, struct mmc_data *data)
 {
-	if (host->error)
-		dev_dbg(host->dev, "%s: cmd=%d arg=%08X; host->error=0x%08X\n",
+	if (host->error) {
+		dev_err(host->dev, "%s: cmd=%d arg=%08X; host->error=0x%08X\n",
 			__func__, cmd->opcode, cmd->arg, host->error);
+		if(cmd->opcode != MMC_SEND_TUNING_BLOCK &&
+		    cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200)
+			dump_register(host);
+	}
 }
 
 static void msdc_request_done(struct msdc_host *host, struct mmc_request *mrq)
@@ -1098,7 +1131,7 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
 		}
 	}
 	if (cmd->error)
-		dev_dbg(host->dev,
+		dev_err(host->dev,
 				"%s: cmd=%d arg=%08X; rsp %08X; cmd_error=%d\n",
 				__func__, cmd->opcode, cmd->arg, rsp[0],
 				cmd->error);
@@ -1171,6 +1204,8 @@ static void msdc_start_command(struct msdc_host *host,
 
 	writel(cmd->arg, host->base + SDC_ARG);
 	writel(rawcmd, host->base + SDC_CMD);
+	dev_err(host->dev, "%s: cmd = %d, arg = %08X; rawcmd = 0x%08X\n",
+			__func__, cmd->opcode, cmd->arg, rawcmd);
 }
 
 static void msdc_cmd_next(struct msdc_host *host,
@@ -1292,9 +1327,9 @@ static bool msdc_data_xfer_done(struct msdc_host *host, u32 events,
 			else if (events & MSDC_INT_DATCRCERR)
 				data->error = -EILSEQ;
 
-			dev_dbg(host->dev, "%s: cmd=%d; blocks=%d",
+			dev_err(host->dev, "%s: cmd=%d; blocks=%d",
 				__func__, mrq->cmd->opcode, data->blocks);
-			dev_dbg(host->dev, "data_error=%d xfer_size=%d\n",
+			dev_err(host->dev, "data_error=%d xfer_size=%d\n",
 				(int)data->error, data->bytes_xfered);
 		}
 
@@ -1599,7 +1634,8 @@ static void msdc_init_hw(struct msdc_host *host)
 		host->def_tune_para.pad_tune = readl(host->base + tune_reg);
 		host->saved_tune_para.pad_tune = readl(host->base + tune_reg);
 	}
-	dev_dbg(host->dev, "init hardware done!");
+	dev_err(host->dev, "init hardware done!");
+	dump_register(host);
 }
 
 static void msdc_deinit_hw(struct msdc_host *host)
