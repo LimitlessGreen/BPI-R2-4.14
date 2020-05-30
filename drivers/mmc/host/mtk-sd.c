@@ -1512,7 +1512,6 @@ static void msdc_init_hw(struct msdc_host *host)
 	sdr_set_field(host->base + MSDC_PATCH_BIT, MSDC_CKGEN_MSDC_DLY_SEL, 1);
 	writel(0xffff4089, host->base + MSDC_PATCH_BIT1);
 	sdr_set_bits(host->base + EMMC50_CFG0, EMMC50_CFG_CFCSTS_SEL);
-	writel(0x14881803, host->base + MSDC_PATCH_BIT2);
 
 	if (host->dev_comp->stop_clk_fix) {
 		sdr_set_field(host->base + MSDC_PATCH_BIT1,
