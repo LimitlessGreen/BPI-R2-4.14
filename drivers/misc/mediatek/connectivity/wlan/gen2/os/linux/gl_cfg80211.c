@@ -1365,9 +1365,9 @@ int mtk_cfg80211_flush_pmksa(struct wiphy *wiphy, struct net_device *ndev)
 	return 0;
 }
 
-void mtk_cfg80211_mgmt_frame_register(IN struct wiphy *wiphy,
+void mtk_cfg80211_update_mgmt_frame_register(IN struct wiphy *wiphy,
 				      IN struct wireless_dev *wdev,
-				      IN u16 frame_type, IN bool reg)
+				      IN struct mgmt_frame_regs *upd)
 {
 #if 0
 	P_MSG_P2P_MGMT_FRAME_REGISTER_T prMgmtFrameRegister = (P_MSG_P2P_MGMT_FRAME_REGISTER_T) NULL;
@@ -1376,7 +1376,7 @@ void mtk_cfg80211_mgmt_frame_register(IN struct wiphy *wiphy,
 
 	do {
 
-		DBGLOG(REQ, LOUD, "mtk_cfg80211_mgmt_frame_register\n");
+		DBGLOG(REQ, LOUD, "mtk_cfg80211_update_mgmt_frame_register\n");
 
 		prGlueInfo = (P_GLUE_INFO_T) wiphy_priv(wiphy);
 

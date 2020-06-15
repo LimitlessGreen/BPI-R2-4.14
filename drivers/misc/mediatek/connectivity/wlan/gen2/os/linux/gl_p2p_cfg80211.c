@@ -1368,9 +1368,9 @@ mtk_p2p_cfg80211_set_bitrate_mask(IN struct wiphy *wiphy,
 	return i4Rslt;
 }				/* mtk_p2p_cfg80211_set_bitrate_mask */
 
-void mtk_p2p_cfg80211_mgmt_frame_register(IN struct wiphy *wiphy,
+void mtk_p2p_cfg80211_update_mgmt_frame_register(IN struct wiphy *wiphy,
 					  struct wireless_dev *wdev,
-					  IN u16 frame_type, IN bool reg)
+					  IN struct mgmt_frame_regs *upd)
 {
 #if 0
 	P_MSG_P2P_MGMT_FRAME_REGISTER_T prMgmtFrameRegister = (P_MSG_P2P_MGMT_FRAME_REGISTER_T) NULL;
