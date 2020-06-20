@@ -198,7 +198,7 @@ static void pwm_mediatek_disable(struct pwm_chip *chip, struct pwm_device *pwm)
 	pwm_mediatek_clk_disable(chip, pwm);
 }
 
-static int pwm_mediatek_set_3dclm(struct pwm_chip *chip, u32 value, bool clear)
+static int pwm_mediatek_set_3dlcm(struct pwm_chip *chip, u32 value, bool clear)
 {
 	struct pwm_mediatek_chip *pc = to_pwm_mediatek_chip(chip);
 	u32 val;
@@ -221,14 +221,14 @@ static int pwm_mediatek_set_polarity(struct pwm_chip *chip,
 {
 	bool inv=(polarity == PWM_POLARITY_INVERSED);
 
-	//enable 3dclm mode for pwm
-	pwm_mediatek_set_3dclm(chip,BIT(0),!inv);
+	//enable 3dlcm mode for pwm
+	pwm_mediatek_set_3dlcm(chip,BIT(0),false);
 	//disable base mode for pwm_no
-	pwm_mediatek_set_3dclm(chip,BIT(pwm->hwpwm + 8),inv);
+	pwm_mediatek_set_3dlcm(chip,BIT(pwm->hwpwm + 8),inv);
 	//enable aux mode for pwm_no
-	pwm_mediatek_set_3dclm(chip,BIT(pwm->hwpwm + 16),!inv);
+	pwm_mediatek_set_3dlcm(chip,BIT(pwm->hwpwm + 16),!inv);
 	//set polarity
-	pwm_mediatek_set_3dclm(chip,BIT(pwm->hwpwm +1),!inv);
+	pwm_mediatek_set_3dlcm(chip,BIT(pwm->hwpwm +1),!inv);
 
         return 0;
 }
@@ -301,7 +301,7 @@ static int pwm_mediatek_probe(struct platform_device *pdev)
 	pc->chip.of_xlate = of_pwm_xlate_with_flags;
 
 	//set 3dclm initial value bits 8-12 for all pwm base mode
-	pwm_mediatek_set_3dclm(&pc->chip,0x1F00,false);
+	pwm_mediatek_set_3dlcm(&pc->chip,0x1F00,false);
 
 	ret = pwmchip_add(&pc->chip);
 	if (ret < 0) {
