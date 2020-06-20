@@ -300,7 +300,7 @@ static int pwm_mediatek_probe(struct platform_device *pdev)
 	pc->chip.of_pwm_n_cells = 3;
 	pc->chip.of_xlate = of_pwm_xlate_with_flags;
 
-	//set 3dclm initial value bits 8-12 for all pwm base mode
+	//set 3dlcm initial value bits 8-12 for all pwm base mode
 	pwm_mediatek_set_3dlcm(&pc->chip,0x1F00,false);
 
 	ret = pwmchip_add(&pc->chip);
