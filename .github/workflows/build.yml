@@ -1,0 +1,82 @@
+name: build
+
+on:
+  push
+      
+jobs:
+  build:
+
+    #runs-on: self-hosted
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Dependencies
+      run: sudo apt install gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu libc6-armhf-cross u-boot-tools bc make gcc libc6-dev libncurses5-dev libssl-dev bison flex ccache 
+    
+    - uses: actions/checkout@v2
+      with:
+        ref: 5.4-main
+        path: 'kernel'
+            
+    - name: Extract Tag Name
+      shell: bash
+      run: cd kernel && echo "##[set-output name=tag;]$(echo ${GITHUB_REF#refs/tags/})"
+      id: extract_tag
+    
+    - name: Build Kernel for R2
+      run: |
+        cd kernel
+        ./build.sh importconfig
+        ./build.sh build
+        ./build.sh pack_debs
+      
+    - name: Build Kernel for R64
+      run: |
+        cd kernel
+        sed -i 's/#\(board=bpi-r64\)/\1/' build.conf #change board to r64
+        ./build.sh importconfig
+        ./build.sh build
+        ./build.sh pack_debs
+      
+    - name: Release Packages
+      uses: meeDamian/github-release@2.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: v5.4
+        name: Kernel ${{ steps.extract_tag.tag }} for BananaPi R2/R64
+        allow_override: true
+        gzip: false
+        files: >
+          *.deb
+    
+    - name: Get Keys
+      env:
+        DeployKey: ${{ secrets.PPA_DEPLOY_KEY }}
+      run: echo $DeployKey > key
+    
+    
+    - uses: actions/checkout@v2
+      env:
+        DeployKey: ${{ secrets.PPA_DEPLOY_KEY }}
+      with:
+        repository: 'LimitlessGreen/my_ppa'
+        path: 'my_ppa'
+        fetch-depth: 0
+        ref: pre_upload
+        ssh-key: ${{ secrets.PPA_DEPLOY_KEY }}
+        
+    - name: Get DEB Packages
+      run: mv -f *.deb my_ppa/Ubuntu
+           
+    - name: Commit Files to PPA
+      run: |
+        cd my_ppa
+        git checkout pre_upload
+        #git config --local core.sshCommand "ssh -i key -F /dev/null"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add -A
+        git commit -m "[GitHub Actions] Autopush"
+        git push
+        
+      
